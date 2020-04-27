@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>View Bookings</title>
+  <meta charset="UTF-8" />
+  <style>
+    body > ul > li {
+      cursor: pointer;
+    }
+  </style>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      var datesRequest = new XMLHttpRequest();
+      datesRequest.open('GET', '/api/bookings');
+      datesRequest.responseType = 'json';
+
+      datesRequest.addEventListener('load', function () {
+        var dates = this.response;
+        var datesWithBookedSchedulesList = document.body.querySelector('ul');
+
+        dates.forEach(function (date) {
+          var dateListItem = document.createElement('li');
+          dateListItem.textContent = date;
+
+          datesWithBookedSchedulesList.appendChild(dateListItem);
+        });
+
+        datesWithBookedSchedulesArray = 
+          Array.prototype.slice.call(datesWithBookedSchedulesList.children);
+        
+        datesWithBookedSchedulesArray.forEach(function (dateListItem) {
+          dateListItem.addEventListener('click', function () {
+            if (this.children.length === 0) {
+              var bookedSchedulesRequest = new XMLHttpRequest();
+              bookedSchedulesRequest.open('GET', `/api/bookings/${this.textContent}`);
+              bookedSchedulesRequest.responseType = 'json';
+
+              bookedSchedulesRequest.addEventListener('load', function () {
+                var bookedSchedulesList = document.createElement('ul');
+                var bookedSchedulesArray = this.response;
+
+                dateListItem.appendChild(bookedSchedulesList);
+
+                bookedSchedulesArray.forEach(function (schedule) {
+                  var scheduleListItem = document.createElement('li');
+                  scheduleListItem.textContent = `${schedule[0]} | ${schedule[1]} | ${schedule[2]}`;
+
+                  bookedSchedulesList.appendChild(scheduleListItem);
+                });
+              });
+
+              bookedSchedulesRequest.send();
+            }
+          });
+        });
+      });
+
+      datesRequest.send();
+    });
+  </script>
+</head>
+
+<body>
+  <h1>Bookings</h1>
+  <ul>
+  </ul>
+</body>
+</html>

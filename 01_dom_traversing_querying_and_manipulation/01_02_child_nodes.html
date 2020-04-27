@@ -1,0 +1,44 @@
+<div id="1">
+  <h1 id="2">Hello, <em id="3">World</em></h1>
+  <p id="4">
+    Welcome to wonderland. This is an
+    <span id="5">awesome</span> place.
+  </p>
+  <a href="#" id="6"><strong id="7">Enter</strong></a>
+  <div id="8"><p id="9"><a href="#" id="10">Go back</a></p></div>
+</div>
+
+<script>
+  function walk(node, callback) {
+    callback(node);
+    var i;
+    for (i = 0; i < node.childNodes.length; i += 1) {
+        walk(node.childNodes[i], callback);
+    }
+  }
+
+  function directIndirectChildNodesCount(node) {
+    var counts = [];
+    var directChildNodesCount = node.childNodes.length;
+    var i;
+    var indirectChildNodesCount = 0;
+
+    counts.push(directChildNodesCount);
+
+    for (i = 0; i < directChildNodesCount; i += 1) {
+      walk(node.childNodes[i], (childNode) => {
+        if (childNode !== node.childNodes[i]) {
+          indirectChildNodesCount += 1;
+        }
+      })
+    }
+
+    counts.push(indirectChildNodesCount);
+
+    return counts;
+  }
+
+  for (var i = 1; i <= 10; i += 1) {
+    console.log(directIndirectChildNodesCount(document.getElementById(String(i))));
+  }
+</script>

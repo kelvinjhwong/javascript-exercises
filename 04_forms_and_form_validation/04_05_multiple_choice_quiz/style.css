@@ -1,0 +1,84 @@
+@import url('../whitespace-reset.css');
+
+body {
+  background-color: beige;
+}
+
+form {
+  margin: 0 auto;
+  width: 600px;
+}
+
+h1 {
+  font-size: 24px;
+  margin-bottom: 30px;
+  margin-top: 19.5px;
+}
+
+ol#questions ul li {
+  margin-bottom: 5px;
+}
+
+p,
+label {
+  font-size: 18px;
+}
+
+p {
+  margin: 10px 0;
+}
+
+p.marking {
+  box-sizing: border-box;
+  height: 35px;
+  line-height: 35px;
+  margin-bottom: 6px;
+  padding-left: 5px;
+  visibility: hidden;
+}
+
+p.marking.missing,
+p.marking.incorrect {
+  border: 1px solid red;
+}
+
+p.marking.correct {
+  border: 1px solid green;
+}
+
+p.marking.visible {
+  visibility: visible;
+}
+
+input[type="submit"],
+input[type="reset"] {
+  border: none;
+  border-radius: 5px;
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 18px;
+  height: 30px;
+}
+
+input[type="submit"] {
+  background-color: lime;
+  color: black;
+  cursor: pointer;
+  width: 121px;
+}
+input[type="submit"][disabled] {
+  background-color: gainsboro;
+  cursor: auto;
+}
+
+input[type="reset"] {
+  background-color: lime;
+  cursor: pointer;
+  width: 71px;
+}
+
+input[type="reset"][disabled] {
+  background-color: gainsboro;
+  color: black;
+  cursor: auto;
+  width: 71px;
+}

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Bookings</title>
+  <meta charset="UTF-8" />
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      var schedulesList = document.body.querySelector('ul');
+      var schedulesRequest = new XMLHttpRequest();
+      schedulesRequest.open('GET', '/api/schedules');
+      schedulesRequest.responseType = 'json';
+
+      schedulesRequest.addEventListener('load', function () {
+        var staffMembersRequest = new XMLHttpRequest();
+        var staffMembers;
+        var schedules = this.response;
+
+        staffMembersRequest.open('GET', '/api/staff_members');
+        staffMembersRequest.responseType = 'json';
+
+        staffMembersRequest.addEventListener('load', function () {
+          staffMembers = this.response;
+
+          schedules.forEach(function (schedule) {
+            if (schedule.student_email !== null) {
+              var scheduleListItem = document.createElement('li');
+              var staffMember = staffMembers.find(function (staffMember) {
+                return staffMember.id === schedule.staff_id;
+              });
+              var cancelButton = document.createElement('a');
+              
+              scheduleListItem.textContent =
+                `${staffMember.name} | ${schedule.student_email} | `
+                + `${schedule.date} | ${schedule.time} `;
+              
+              cancelButton.href = '#';
+              cancelButton.textContent = 'Cancel Booking';
+
+              cancelButton.addEventListener('click', function (event) {
+                event.preventDefault();
+
+                function cancelBooking(bookingId) {
+                  var cancelBookingRequest = new XMLHttpRequest();
+                  cancelBookingRequest.open('PUT', `/api/bookings/${String(bookingId)}`);
+
+                  cancelBookingRequest.addEventListener('load', function () {
+                    var status = this.status;
+
+                    switch (status) {
+                      case 204:
+                        alert('The booking has been cancelled');
+                        document.location.reload();
+                        break;
+                      case 404:
+                        alert(this.response);
+                        break;
+                    }
+                  });
+
+                  cancelBookingRequest.send();
+                }
+
+                cancelBooking(schedule.id);
+              });
+              
+              scheduleListItem.appendChild(cancelButton);            
+              schedulesList.appendChild(scheduleListItem);
+            }
+          });
+        });
+        
+        staffMembersRequest.send();
+      });
+
+      schedulesRequest.send();
+    });
+  </script>
+</head>
+
+<body>
+  <h1>Bookings</h1>
+  <ul></ul>
+</body>
+</html>

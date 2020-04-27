@@ -1,0 +1,36 @@
+@import url("../whitespace-reset.css");
+
+body {
+  background-color: olive;
+  font-family: Arial, Helvetica, sans-serif;
+  text-align: center;
+}
+
+h1 {
+  color: white;
+  font-size: 78px;
+  font-weight: bold;
+  margin-top: 200px;
+  margin-bottom: 20px;
+}
+
+button {
+  background-color: transparent;
+  border: 1px solid white;
+  border-radius: 5px;
+  box-sizing: border-box;
+  color: white;
+  cursor: pointer;
+  height: 38px;
+  margin: 0 10px;
+  width: 95px;
+}
+
+button:hover {
+  background-color: darkolivegreen;
+}
+
+#start,
+#stop {
+  display: none;
+}

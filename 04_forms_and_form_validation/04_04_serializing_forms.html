@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+  <title>Sign Up</title>
+  <meta charset="utf-8" />
+  <style>
+    @import url('whitespace-reset.css');
+
+    body {
+      background-color: limegreen;
+    }
+
+    h1 {
+      color: white;
+      font-size: 24px;
+      margin: 70px auto 15px auto;
+      width: 800px;
+    }
+
+    main {
+      background-color: white;
+      border-radius: 5px;
+      box-sizing: border-box;
+      margin: 0 auto;
+      padding: 20px;
+      width: 800px;
+    }
+
+    p {
+      font-size: 18px;
+    }
+
+    p.form.error-message,
+    p.field.error-message {
+      color: maroon;
+      display: none;
+    }
+
+    p.form.error-message.active {
+      display: block;
+    }
+
+    p.field.error-message.active {
+      display: inline-block;
+    }
+
+    label {
+      display: inline-block;
+      margin-top: 20px;
+      width: auto;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"] {
+      border: 1px solid lightgray;
+      border-radius: 4px;
+      box-sizing: border-box;
+      font-size: 18px;
+      margin-right: 30.5px;
+      margin-top: 5px;
+      padding: 10px;
+      height: 38px;
+      width: 300px;
+    }
+
+    input[type="text"][name^="credit-card"] {
+      margin-right: 0px;
+      width: 65px;
+    }
+
+    input[type="text"].focus,
+    input[type="email"].focus,
+    input[type="password"].focus {
+      border-color: limegreen;
+      outline: none;
+    }
+
+    input[type="text"].error,
+    input[type="email"].error,
+    input[type="password"].error {
+      border-color: maroon;
+      outline: none;
+    }
+
+    input[type="submit"] {
+      background-color: limegreen;
+      border: none;
+      border-radius: 5px;
+      box-sizing: border-box;
+      color: white;
+      display: block;
+      font-size: 16px;
+      font-weight: bold;
+      height: 28.5px;
+      margin-top: 20px;
+      width: 90.5px;
+    }
+
+    div#serialized-form {
+      background-color: white;
+      border-radius: 5px;
+      box-sizing: border-box;
+      margin: 20px auto;
+      padding: 20px;
+      width: 800px;
+    }
+
+    h2 {
+      font-size: 20px;
+      margin-bottom: 20px;
+    }
+  </style>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script>
+    $(function () {
+      function $getErrorMessagesForInput($input, errorType) {
+        if (errorType !== undefined) {
+          return $input.closest('label').siblings(`p.${errorType}.error-message`);
+        } else {
+          return $input.closest('label').siblings(`p.error-message`);
+        }
+      }
+
+      function areAllInputsValid() {
+        return $allInputs.toArray().every(function (input) {
+          return input.validity.valid;
+        });
+      }
+
+      function concatenateCreditCardInputs(formData) {
+        var creditCardNumberString = formData.getAll('credit-card').join('');
+        formData.delete('credit-card');
+        formData.append('credit-card', creditCardNumberString);
+      }
+
+      function formDataToQueryString(formData) {
+        var keyValuePair;
+        var queryString = '';
+        var key;
+        var value;
+
+        for (keyValuePair of formData) {
+          key = encodeURIComponent(keyValuePair[0]);
+          value = encodeURIComponent(keyValuePair[1]);
+
+          queryString += key + '=' + value + '&';
+        }
+
+        return queryString.slice(0, -1);
+      }
+
+      var $form = $('form');
+      var $formErrorMessage = $('form p.form.error-message');
+      var $allInputs = $('input[type!="submit"]');
+
+      $form.on('focus', 'input[type!="submit"]', function (e) {
+        var $thisInput = $(e.target);
+
+        $thisInput.removeClass('error')
+        $thisInput.addClass('focus');
+
+        $getErrorMessagesForInput($thisInput).removeClass('active');
+      });
+
+      $form.on('blur', 'input[type!="submit"]', function (e) {
+        var thisInput = e.target;
+        var $thisInput = $(thisInput);
+
+        $thisInput.removeClass('focus');
+
+        thisInput.checkValidity();
+
+        if (areAllInputsValid()) {
+          $formErrorMessage.removeClass('active');
+        }
+      });
+
+      $allInputs.on('invalid', function (e) {
+        var thisInput = e.target;
+        var $thisInput = $(thisInput);
+
+        $thisInput.addClass('error');
+
+        if (thisInput.validity.valueMissing) {
+          $getErrorMessagesForInput($thisInput, 'required').addClass('active');
+        } else if (thisInput.validity.patternMismatch || thisInput.validity.typeMismatch) {
+          $getErrorMessagesForInput($thisInput, 'invalid').addClass('active');
+        }
+      });
+
+      $('input[name$="-name"]').on('keypress', function (e) {
+        var allowedCharRegExp = /^[a-zA-Z'\s]$/;
+
+        if (!allowedCharRegExp.test(e.key)) {
+          e.preventDefault();
+        }
+      });
+
+      $('input[name^="credit-card"]').on('keypress', function (e) {
+        var allowedCharRegExp = /^\d$/;
+
+        if (!allowedCharRegExp.test(e.key)) {
+          e.preventDefault();
+        }
+      });
+
+      $('input[name^="credit-card"]:not(:last-of-type)').on('input', function (e) {
+        var thisInput = e.target;
+        var $thisInput = $(thisInput);
+        var $nextInput = $thisInput.next('[name^="credit-card"]');
+
+        if ($thisInput.val() !== '' && thisInput.validity.valid) {
+          $nextInput.focus();
+        }
+      });
+
+      $form.on('submit', function (e) {
+        e.preventDefault();
+
+        var thisForm = e.target;
+        var $thisForm = $(thisForm);
+        var formData;
+        var queryString;
+
+        if (thisForm.checkValidity()) {
+          // formData = $thisForm.serialize();
+          // formData = formData.replace(/&credit-card=(\d{4})&credit-card=(\d{4})&credit-card=(\d{4})&credit-card=(\d{4})/, '&credit-card=$1$2$3$4');
+
+          formData = new FormData(thisForm);
+
+          concatenateCreditCardInputs(formData);
+
+          queryString = formDataToQueryString(formData);
+
+          $('#serialized-form p').text(queryString);
+        } else {
+          $formErrorMessage.addClass('active');
+        }
+      });
+    });
+  </script>
+</head>
+
+<body>
+  <h1>Sign up Form</h1>
+  <main>
+    <form method="post" action="#" novalidate>
+      <p class="form error-message">Form cannot be submitted until errors are corrected.</p>
+
+      <fieldset>
+        <label>
+          <p>First Name</p>
+          <input type="text" name="first-name" pattern="[a-zA-Z'\\s]+" required />
+        </label>
+        <p class="field required error-message">First Name is a required field.</p>
+      </fieldset>
+      
+      <fieldset>
+        <label>
+          <p>Last Name</p>
+          <input type="text" name="last-name" pattern="[a-zA-Z'\\s]+" required />
+        </label>
+        <p class="field required error-message">Last Name is a required field.</p>
+      </fieldset>
+
+      <fieldset>
+        <label>
+          <p>Email</p>
+          <input type="email" name="email" placeholder="someone@example.com" required />
+        </label>
+        <p class="field required error-message">Email is a required field.</p>
+        <p class="field invalid error-message">Please enter a valid email.</p>
+      </fieldset>
+    
+      <fieldset>
+        <label>
+          <p>Password</p>
+          <input type="password" name="password" pattern=".{10,}" required />
+        </label>
+        <p class="field required error-message">Password is a required field.</p>
+        <p class="field invalid error-message">Password must be at least 10 characters long.</p>
+      </fieldset>
+    
+      <fieldset>
+        <label>
+          <p>Phone Number</p>
+          <input type="text" name="phone-number" placeholder="111-222-3333" pattern="\d{3}-\d{3}-\d{4}" />
+        </label>
+        <p class="field invalid error-message">Please Enter a valid Phone Number.</p>
+      </fieldset>
+
+      <fieldset>
+        <label>
+          <p>Credit Card</p>
+          <input type="text" name="credit-card" maxlength="4" pattern="\d{4}" />
+          -
+          <input type="text" name="credit-card" maxlength="4" pattern="\d{4}" />
+          -
+          <input type="text" name="credit-card" maxlength="4" pattern="\d{4}" />
+          -
+          <input type="text" name="credit-card" maxlength="4" pattern="\d{4}" />
+        </label>
+      </fieldset>
+      
+      <input type="submit" value="Sign Up" />
+    </form>
+  </main>
+
+  <div id="serialized-form">
+    <h2>Serialized Form</h2>
+    <p></p>
+  </div>
+</body>
+</html>

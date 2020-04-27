@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Add schedules</title>
+  <meta charset="UTF-8" />
+  <style>
+    body {
+      padding: 0px 5px;
+    }
+
+    button {
+      background-color: cadetblue;
+      border: none;
+      border-radius: 5px;
+      color: white;
+      height: 60px;
+      margin-bottom: 15px;
+      margin-top: 20px;
+      width: 120px;
+    }
+
+    legend {
+      background-color: white;
+      font-size: 20px;
+      left: 15px;
+      position: absolute;
+      top: -15px;
+    }
+
+    fieldset {
+      border: 2px solid gray;
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 20px;
+      padding: 40px 40px;
+      position: relative;
+    }
+
+    label {
+      display: flex;
+      flex-basis: 100px;
+      margin: 10px 0;
+    }
+
+    h4 {
+      color: crimson;
+      flex-basis: 110px;
+      font-size: 20px;
+      font-weight: bold;
+      margin: 0;
+      padding-right: 15px;
+      text-align: right;
+    }
+
+    input[type="submit"] {
+      background-color: crimson;
+      border: none;
+      border-radius: 5px;
+      color: white;
+      height: 60px;
+      width: 120px;
+    }
+  </style>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      var staffMembers;
+      var staffMembersRequest = new XMLHttpRequest();
+      var schedulesForm = document.querySelector('form');
+      var addMoreSchedules = document.querySelector('button');
+
+      staffMembersRequest.open('GET', '/api/staff_members');
+      staffMembersRequest.responseType = 'json';
+
+      staffMembersRequest.addEventListener('load', function () {
+        var scheduleSelect = schedulesForm.querySelector('fieldset select');
+
+        staffMembers = this.response;
+
+        staffMembers.forEach(function (staffMember) {
+          var staffMemberOption = document.createElement('option');
+          staffMemberOption.value = staffMember.id;
+          staffMemberOption.text = staffMember.name;
+
+          scheduleSelect.add(staffMemberOption);
+        });
+      });
+
+      staffMembersRequest.send();
+
+      addMoreSchedules.addEventListener('click', function (event) {
+        var lastSchedule;
+        var newSchedule;
+        var newScheduleHeading;
+        var newScheduleInputs;
+
+        event.preventDefault();
+
+        lastSchedule = document.querySelector('form fieldset:last-of-type');
+        newSchedule = lastSchedule.cloneNode(true);
+
+        newScheduleHeading = newSchedule.children[0];
+        newScheduleHeading.textContent =
+          newScheduleHeading.textContent.replace(/(\d+)/, (match) => {
+            return String(Number(match) + 1);
+          });
+
+        newScheduleInputs = Array.prototype.slice.call(newSchedule.querySelectorAll('input'));
+        newScheduleInputs.forEach((input) => input.value = '');
+        
+        lastSchedule.insertAdjacentElement('afterend', newSchedule);
+      });
+
+      schedulesForm.addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        function schedulesFormDataToJSON(schedulesFormData) {
+          var pair;
+          var value;
+          var schedulesJSON = { schedules: [] };
+          var keyCount = 0;
+          var schedule = {};
+
+          for (pair of schedulesFormData.entries()) {
+            key = pair[0];
+            value = pair[1];
+
+            if (key === 'staff_id') {
+              value = Number(value);
+            }
+
+            schedule[key] = value;
+
+            keyCount += 1;
+
+            if (keyCount >= 3) {
+              schedulesJSON.schedules.push(schedule);
+              schedule = {};
+              keyCount = 0;
+            }
+          }
+
+          return schedulesJSON;
+        }
+      
+        var schedulesFormData = new FormData(this);
+        var schedulesJSONString = JSON.stringify(schedulesFormDataToJSON(schedulesFormData));
+        var addSchedulesRequest = new XMLHttpRequest();
+
+        addSchedulesRequest.open('POST', this.action);
+        addSchedulesRequest.setRequestHeader('Content-Type', 'application/json');
+
+        addSchedulesRequest.addEventListener('load', function () {
+          var status = this.status;
+
+          switch (status) {
+            case 201:
+              alert(this.response);
+              schedulesForm.reset();
+              break;
+            case 400:
+              alert(this.response);
+              break;
+          }
+        });
+
+        addSchedulesRequest.send(schedulesJSONString);
+      });
+    });
+  </script>
+</head>
+
+<body>
+  <button>Add more schedules</button>
+  <form method="post" action="/api/schedules">
+    <fieldset>
+      <legend>Schedule 1</legend>
+      <label for="staff_name">
+        <h4>Staff Name : </h4>
+        <select name="staff_id">
+        </select>
+      </label>
+
+      <label for="date">
+        <h4>Date : </h4>
+        <input name="date" placeholder="mm-dd-yy" />
+      </label>
+
+      <label for="time">
+        <h4>Time : </h4>
+        <input name="time" placeholder="hh:mm" />
+      </label>
+    </fieldset>
+
+    <input type="submit" value="Submit" />
+  </form>
+</body>
+</html>

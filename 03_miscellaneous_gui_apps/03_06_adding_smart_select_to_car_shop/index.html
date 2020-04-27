@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+  <title>Car Shop</title>
+  <meta charset="utf-8" />
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.4.2/handlebars.js"></script>
+  <script src="app.js"></script>
+</head>
+
+<body>
+  <header>
+    <h1>Buy Used Cars</h1>
+    <form method="get" action="#">
+      <label for="make-options">Make</label>
+      <select id="make-options" name="make"></select>
+
+      <label for="model-options">Model</label>
+      <select id="model-options" name="model"></select>
+
+      <label for="price-options">Price</label>
+      <select id="price-options" name="price"></select>
+
+      <label for="year-options">Year</label>
+      <select id="year-options" name="year"></select>
+
+      <!-- <input type="submit" value="Filter" /> -->
+
+      <input type="reset" />
+    </form>
+  </header>
+
+  <main>
+    <ul id="cars"></ul>
+  </main>
+
+  <script id="car" type="text/x-handlebars-template">
+    <li>
+      <img src="{{image}}" alt="{{make}} {{model}}" />
+      <h2>{{make}} {{model}}</h2>
+      <p>Year: {{year}}</p>
+      <p>Price: ${{price}}</p>
+      <a href="#"><button type="button">Buy</button></a>
+    </li>
+  </script>
+
+  <script id="filter-option" type="text/x-handlebars-template">
+    <option value="{{value}}">
+      {{text}}
+    </option>
+  </script>
+</body>
+</html>

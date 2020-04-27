@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+  <title>Rich Text Editor</title>
+  <meta charset="utf-8" />
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.4.2/handlebars.js"></script>
+  <script src="app.js"></script>
+</head>
+
+<body>
+  <h1>Rich Text Editor</h1>
+
+  <div id="formatting-options">
+    <ul></ul>
+  </div>
+  <div id="editor" contenteditable="true"></div>
+
+  <script id="formatting-option" type="text/x-handlebars-template">
+    <li>
+      <button id="{{option-name}}" class="{{option-class}}" data-formatting-selector="{{formatting-selector}}" type="button"></button>
+    </li>
+  </script>
+</body>
+</html>

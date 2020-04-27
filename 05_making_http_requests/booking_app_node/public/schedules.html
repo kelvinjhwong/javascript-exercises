@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Schedules</title>
+  <meta charset="UTF-8" />
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      var schedulesList = document.body.querySelector('ul');
+      var schedulesRequest = new XMLHttpRequest();
+      schedulesRequest.open('GET', '/api/schedules');
+      schedulesRequest.responseType = 'json';
+
+      schedulesRequest.addEventListener('load', function () {
+        var staffMembersRequest = new XMLHttpRequest();
+        var staffMembers;
+        var schedules = this.response;
+
+        staffMembersRequest.open('GET', '/api/staff_members');
+        staffMembersRequest.responseType = 'json';
+
+        staffMembersRequest.addEventListener('load', function () {
+          staffMembers = this.response;
+
+          schedules.forEach(function (schedule) {
+            var scheduleListItem = document.createElement('li');
+            var staffMember = staffMembers.find(function (staffMember) {
+              return staffMember.id === schedule.staff_id;
+            });
+            var deleteButton = document.createElement('a');
+            
+            scheduleListItem.textContent =
+              `${staffMember.name} | ${schedule.student_email || 'still available'} | `
+              + `${schedule.date} | ${schedule.time} `;
+            
+            deleteButton.href = '#';
+            deleteButton.textContent = 'Delete Schedule';
+
+            deleteButton.addEventListener('click', function (event) {
+              event.preventDefault();
+
+              function cancelSchedule(scheduleId) {
+                var cancelScheduleRequest = new XMLHttpRequest();
+                cancelScheduleRequest.open('DELETE', `/api/schedules/${String(scheduleId)}`);
+
+                cancelScheduleRequest.addEventListener('load', function () {
+                  var status = this.status;
+
+                  switch (status) {
+                    case 204:
+                      alert('The schedule has been deleted.');
+                      document.location.reload();
+                      break;
+                    default:
+                      alert(this.response);
+                      break;
+                  }
+                });
+
+                cancelScheduleRequest.send();
+              }
+
+              cancelSchedule(schedule.id);
+            });
+            
+            scheduleListItem.appendChild(deleteButton);            
+            schedulesList.appendChild(scheduleListItem);
+          });
+        });
+        
+        staffMembersRequest.send();
+      });
+
+      schedulesRequest.send();
+    });
+  </script>
+</head>
+
+<body>
+  <h1>Schedules</h1>
+  <ul></ul>
+</body>
+</html>

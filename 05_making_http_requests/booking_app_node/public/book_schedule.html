@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Book a schedule</title>
+  <meta charset=UTF-8 />
+  <style>
+    #book-schedule-form label:first-of-type {
+      display: block;
+    }
+
+    #new-student-form {
+      background-color: lightgray;
+      display: none;
+      margin-top: 20px;
+      padding: 15px;
+    }
+
+    #new-student-form label{
+      display: block;
+    }
+  </style>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      var bookScheduleForm = document.querySelector('#book-schedule-form');
+
+      var staffMembersRequest = new XMLHttpRequest();
+      staffMembersRequest.open('GET', '/api/staff_members');
+      staffMembersRequest.responseType = 'json';
+
+      staffMembersRequest.addEventListener('load', function () {
+        var staffMembers = this.response;
+
+        var schedulesRequest = new XMLHttpRequest()
+        schedulesRequest.open('GET', '/api/schedules');
+        schedulesRequest.responseType = 'json';
+
+        schedulesRequest.addEventListener('load', function () {
+          var schedules = this.response;
+
+          schedules.forEach(function (schedule) {
+            var staffName = staffMembers.find(function (staffMember) {
+              return staffMember.id === schedule.staff_id;
+            }).name;
+
+            var schedulesSelect = bookScheduleForm.querySelector('select');
+            var option;
+
+            if (schedule.student_email === null) {
+              option = document.createElement('option');
+              option.value = schedule.id;
+              option.text =
+                `${staffName} | ${schedule.date} | ${schedule.time}`;
+              
+              schedulesSelect.add(option);
+            }
+          });
+        });
+
+        schedulesRequest.send();
+      });
+
+      staffMembersRequest.send();
+
+      bookScheduleForm.addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        function scheduleFormDataToJSON(scheduleFormData) {
+          var json = {};
+          var pair;
+          var key;
+          var value;
+          
+          for (var pair of scheduleFormData) {
+            [key, value] = [pair[0], pair[1]];
+
+            if (key === 'id') {
+              value = Number(value);
+            }
+
+            json[key] = value;
+          }
+
+          return json;
+        }
+
+        var scheduleFormData = new FormData(this);
+        var scheduleJSON = scheduleFormDataToJSON(scheduleFormData);
+
+        var bookScheduleRequest = new XMLHttpRequest();
+        bookScheduleRequest.open('POST', bookScheduleForm.action);
+        bookScheduleRequest.setRequestHeader('Content-Type', 'application/json');
+
+        bookScheduleRequest.addEventListener('load', function () {
+          var status = this.status;
+          var response = this.response;
+          var newStudentForm;
+          var newStudentEmail;
+          var newStudentBookingSequence;
+
+          switch (status) {
+            case 204:
+              alert('Booked');
+              bookScheduleForm.reset();
+
+              newStudentForm = document.querySelector('#new-student-form');
+              newStudentForm.reset();
+              newStudentForm.style.display = 'none';
+
+              document.location.reload();
+              break;
+            case 404:
+              alert(response);
+              
+              if (response.includes('Student does not exist;')) {
+                newStudentForm = document.querySelector('#new-student-form');
+                newStudentForm.style.display = 'block';
+
+                newStudentEmail = newStudentForm.querySelector('input[name="email"]');
+                newStudentBookingSequence = newStudentForm.querySelector('input[name="booking_sequence"]');
+
+                newStudentEmail.value =
+                  bookScheduleForm.querySelector('input[name="student_email"]').value;
+                
+                newStudentBookingSequence.value = response.match(/\d+/)[0];
+
+                newStudentForm.addEventListener('submit', function (event) {
+                  event.preventDefault();
+
+                  function studentFormDataToJSON(studentFormData) {
+                    var json = {};
+                    var pair;
+                    var key;
+                    var value;
+                    
+                    for (var pair of studentFormData) {
+                      [key, value] = [pair[0], pair[1]];
+
+                      if (key === 'booking_sequence') {
+                        value = Number(value);
+                      }
+
+                      json[key] = value;
+                    }
+
+                    return json;
+                  }
+
+                  var newStudentRequest = new XMLHttpRequest();
+                  var newStudentFormData = new FormData(newStudentForm);
+                  var newStudentJSON = studentFormDataToJSON(newStudentFormData);
+
+                  newStudentRequest.open('POST', '/api/students');
+                  newStudentRequest.setRequestHeader('Content-Type', 'application/json');
+
+                  newStudentRequest.addEventListener('load', function () {
+                    var response = this.response;
+                    var newStudentName;
+                    alert(response);
+
+                    if (this.status === 201) {
+                      newStudentName = newStudentForm.querySelector('input[name="name"]');
+                      newStudentName.value = '';
+
+                      bookScheduleForm.querySelector('input[name="student_email"]').value
+                        = newStudentEmail.value;
+
+                      bookScheduleForm.dispatchEvent(new Event('submit'));
+                    }
+                  });
+
+                  newStudentRequest.send(JSON.stringify(newStudentJSON));
+                });
+              }
+
+              break;
+          }
+        });
+
+        bookScheduleRequest.send(JSON.stringify(scheduleJSON));
+      });
+    });
+  </script>
+</head>
+
+<body>
+  <h1>Schedules</h1>
+  <form id="book-schedule-form" method="post" action="/api/bookings">
+    <label>
+      Please select one schedule
+      <select name="id">
+      </select>
+    </label>
+
+    <label>
+      Email: 
+      <input name="student_email" />
+    </label>
+
+    <input type="submit" value="Submit" />
+  </form>
+
+  <form id="new-student-form">
+    <h1>Please provide new student details</h1>
+    
+    <label>
+      Email: 
+      <input name="email" />
+    </label>
+
+    <label>
+      Name:
+      <input name="name" />
+    </label>
+
+    <label>
+      Booking Sequence: 
+      <input name="booking_sequence" />
+    </label>
+
+    <input type="submit" />
+  </form>
+</body>
+</html>

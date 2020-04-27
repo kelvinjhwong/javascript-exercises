@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+  <title>Todo List</title>
+  <meta charset="utf-8" />
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.4.2/handlebars.js"></script>
+  <script src="app.js"></script>
+</head>
+
+<body>
+  <h1>Todos</h1>
+
+  <ul></ul>
+
+  <div id="modal-background"></div>
+
+  <div id="modal">
+    <p>Are you sure you want to delete this todo?</p>
+    <button id="delete-todo" type="button">Yes</button>
+    <button id="cancel-delete" type="button">No</button>
+  </div>
+
+  <script id="language" type="text/x-handlebars-template">
+    <li data-id="{{id}}">
+      <p>
+        {{title}}
+      </p>
+      
+      <a href="#"></a>
+    </li>
+  </script>
+</body>
+</html>

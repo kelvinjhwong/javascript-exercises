@@ -1,0 +1,138 @@
+body {
+  background-color: seagreen;
+  padding: 25px 20px;
+  margin: 0;
+  position: relative;
+}
+
+h1 {
+  color: white;
+  font-size: 28px;
+}
+
+ul {
+  list-style: none;
+}
+
+ul#todos-list li {
+  align-items: center;
+  background-color: white;
+  border-radius: 5px;
+  box-sizing: border-box;
+  display: flex;
+  height: 50px;
+  justify-content: space-between;
+  margin: 20px 0;
+  padding: 0 20px;
+  width: 600px;
+}
+
+ul#context-menu {
+  border-radius: 5px;
+  display: none;
+  left: 0;
+  margin: 0;
+  padding: 0;
+  position: fixed;
+  top: 0;
+  width: 200px;
+}
+
+ul#context-menu li {
+  background-color: lightgray;
+  font-size: 18px;
+  height: 42px;
+  line-height: 42px;
+  padding-left: 10px;
+}
+
+ul#context-menu li:first-of-type {
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+}
+
+ul#context-menu li:last-of-type {
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+}
+
+ul#context-menu li + li {
+  border-top: 1px solid white;
+}
+
+ul#context-menu li:hover {
+  background-color: darkgray;
+  color: white;
+  cursor: pointer;
+}
+
+p {
+  font-size: 18px;
+  margin: 0;
+}
+
+a {
+  background-image: url(http://pluspng.com/img-png/red-cross-png-red-cross-png-file-2000.png);
+  background-size: cover;
+  flex-basis: auto;
+  height: 20px;
+  width: 20px;
+}
+
+a:hover {
+  height: 25px;
+  width: 25px;
+}
+
+div {
+  border: none;
+  display: none;
+  box-sizing: border-box;
+}
+
+/* div.visible {
+  display: block;
+} */
+
+div#modal-background {
+  background-color: rgb(0, 0, 0, 0.3);
+  height: 100%;
+  left: 0;
+  padding: 0;
+  position: fixed;
+  top: 0;
+  width: 100%
+}
+
+div#modal {
+  background-color: white;
+  border-radius: 5px;
+  height: 150px;
+  left: 542px;
+  margin: 0;
+  padding: 39px 21px 10px 21px;
+  position: absolute;
+  top: 142px;
+  width: 500px;
+}
+
+div#modal button {
+  border: none;
+  border-radius: 5px;
+  bottom: 11px;
+  color: white;
+  font-size: 16px;
+  height: 33px;
+  position: absolute;
+  width: 60px;
+}
+
+button#confirm-delete {
+  background-color: maroon;
+  right: 85px;
+}
+
+button#cancel-delete {
+  background-color: forestgreen;
+  right: 20px;
+}

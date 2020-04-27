@@ -1,0 +1,65 @@
+@import url("../whitespace-reset.css");
+
+body {
+  background-color: teal;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+main {
+  background-color: white;
+  border-radius: 5px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  height: 430px;
+  margin: 50px auto;
+  padding: 5px;
+  width: 350px;
+}
+
+p {
+  flex-basis: auto;
+  flex-grow: 0;
+  height: 18.5px;
+  margin: 25px 10px;
+  /* overflow: hidden; */
+  /* text-overflow: clip; */
+  text-align: right;
+  /* white-space: nowrap; */
+}
+
+h1 {
+  flex-basis: auto;
+  flex-grow: 0;
+  font-size: 35px;
+  font-weight: normal;
+  margin: 0 10px 2.5px 10px;
+  overflow: hidden;
+  text-align: right;
+  /* text-overflow: clip; */
+}
+
+hr {
+  background-color: silver;
+  border: none;
+  flex-basis: auto;
+  height: 1px;
+  width: 100%
+}
+
+ul {
+  display: grid;
+  column-gap: 4px;
+  flex-grow: 1;
+  grid-template-columns: repeat(4, 1fr);
+  margin-top: 7px;
+  row-gap: 5px;
+  text-align: center;
+}
+
+li {
+  background-color: lightgray;
+  border-radius: 5px;
+  cursor: pointer;
+  line-height: 53px;
+}

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Node Swap</title>
+  </head>
+  <body>
+    <div id="1">
+      <div id="4"></div>
+      <div id="5">
+        <div id="6"></div>
+      </div>
+    </div>
+    <div id="2"></div>
+    <div id="3">
+      <div id="7"></div>
+      <div id="8"></div>
+      <div id="9"></div>
+    </div>
+
+    <script>
+      function nodeSwap(id1, id2) {
+        var node1 = document.getElementById(id1);
+        var node2 = document.getElementById(id2);
+        var placeholder;
+
+        if (node1 === null || node2 === null) {
+          return;
+        } else if (node1.contains(node2) || node2.contains(node1)) {
+          return;
+        }
+
+        placeholder = document.createElement('div');
+
+        node2.insertAdjacentElement('afterend', placeholder);
+        node1.insertAdjacentElement('afterend', node2);
+        placeholder.insertAdjacentElement('beforebegin', node1);
+        placeholder.remove();
+
+        return true;
+      }
+    </script>
+  </body>
+</html>

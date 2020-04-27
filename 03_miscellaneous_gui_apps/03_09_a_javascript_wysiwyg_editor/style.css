@@ -1,0 +1,114 @@
+/* @import url("../whitespace-reset.css"); */
+
+body {
+  background-color: slateblue;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+h1 {
+  color: white;
+  font-size: 24px;
+  margin-bottom: 30px;
+  margin-top: 16px;
+  text-align: center;
+}
+
+#formatting-options {
+  background-color: silver;
+  box-sizing: border-box;
+  height: 31px;
+  margin: 0 auto; 
+  width: 802px;
+}
+
+#formatting-options ul {
+  align-items: center;
+  display: flex;
+  height: 100%;
+  padding: 0;
+  list-style: none;
+}
+
+#formatting-options button {
+  background-color: transparent;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 70%;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  height: 23px;
+  margin: 0 5px;
+  vertical-align: middle;
+  width: 23px;
+}
+
+#formatting-options button:hover,
+#formatting-options button.active {
+  background-color: white;
+}
+
+
+#bold {
+  background-image: url('https://image.flaticon.com/icons/svg/25/25432.svg');
+}
+
+#italic {
+  background-image: url('https://image.flaticon.com/icons/svg/25/25392.svg');
+}
+
+#underline {
+  background-image: url('https://image.flaticon.com/icons/svg/25/25433.svg');
+}
+
+#strikeThrough {
+  background-image: url('https://image.flaticon.com/icons/svg/25/25626.svg');
+}
+
+#createLink {
+  background-image: url('https://image.flaticon.com/icons/svg/25/25385.svg');
+}
+
+#formatting-options button#createLink.active {
+  background-color: dimgray;
+}
+
+#unlink {
+  background-image: url('https://image.flaticon.com/icons/svg/25/25341.svg');
+  /* display: none; */
+}
+
+#insertUnorderedList {
+  background-image: url('https://image.flaticon.com/icons/svg/25/25648.svg');
+}
+
+#insertOrderedList {
+  background-image: url('https://image.flaticon.com/icons/svg/25/25242.svg');
+}
+
+#justifyLeft {
+  background-image: url('https://image.flaticon.com/icons/svg/25/25351.svg');
+}
+
+#justifyRight {
+  background-image: url('https://image.flaticon.com/icons/svg/25/25288.svg');
+}
+
+#justifyCenter {
+  background-image: url('https://image.flaticon.com/icons/svg/25/25440.svg');
+}
+
+#justifyFull {
+  background-image: url('https://image.flaticon.com/icons/svg/25/25181.svg');
+}
+
+#editor {
+  background-color: white;
+  box-sizing: border-box;
+  height: 471px;
+  margin: 0 auto;
+  overflow: auto;
+  padding: 5px;
+  text-align: left;
+  width: 802px;
+}
